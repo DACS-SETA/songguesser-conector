@@ -1,14 +1,22 @@
 package com.songguesser.conector.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.songguesser.conector.api.client.ItunesClient;
 import com.songguesser.conector.dto.ItunesResponse;
 import com.songguesser.conector.dto.SongDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Random;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
+@Slf4j
 @Service
 public class ItunesService {
 
@@ -48,5 +56,43 @@ public class ItunesService {
     public List<SongDto> searchSongs(String term) {
         ItunesResponse response = itunesClient.search(term, "music", "song", 25);
         return response != null ? response.getResults() : List.of();
+    }
+
+    public Object getPopularSongsRaw() {
+        String[] queries = {
+                "Taylor Swift", "The Weeknd", "Bad Bunny", "Drake", "Adele",
+                "Ed Sheeran", "Beyonce", "Coldplay", "Billie Eilish", "Bruno Mars",
+                "Rihanna", "Post Malone", "Eminem", "Shakira", "Imagine Dragons"
+        };
+
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (String artist : queries) {
+            try {
+                String url = String.format(
+                        "https://itunes.apple.com/search?term=%s&media=music&entity=song&limit=5",
+                        URLEncoder.encode(artist, StandardCharsets.UTF_8)
+                );
+
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .GET()
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> json = mapper.readValue(response.body(), Map.class);
+
+                results.add(json);
+
+                log.info("Fetched {} songs for artist {}", json.get("resultCount"), artist);
+            } catch (Exception e) {
+                log.error("Error fetching songs for artist {}: {}", artist, e.getMessage());
+            }
+        }
+
+        return results;
     }
 }

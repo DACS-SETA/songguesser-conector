@@ -18,7 +18,7 @@ public class ItunesController {
         this.itunesService = itunesService;
     }
 
-    @GetMapping("/random")
+    @GetMapping(value = "/random", produces = "application/json")
     public SongDto getRandom() {
         log.info("Fetching random song...");
         return itunesService.getRandomSong();
@@ -47,4 +47,12 @@ public class ItunesController {
         log.info("Buscando canciones en iTunes para term='{}'", term);
         return itunesService.searchSongs(term);
     }
+    
+    // ANC: Just for populate database with builded json
+    @GetMapping("/popular")
+    public Object getPopularSongsRaw() {
+        log.info("Fetching popular songs (raw JSON)...");
+        return itunesService.getPopularSongsRaw();
+    }
+
 }
