@@ -32,7 +32,7 @@ public class ItunesService {
     }
 
     public SongDto getRandomSongByGenre(String genre) {
-        ItunesResponse response = itunesClient.search(genre, "music", "song", 50);
+        ItunesResponse response = itunesClient.search(genre, "music", "song", 50, "AR");
         if (response != null && !response.getResults().isEmpty()) {
             List<SongDto> songs = response.getResults();
             return songs.get(random.nextInt(songs.size()));
@@ -41,7 +41,7 @@ public class ItunesService {
     }
 
     public List<SongDto> getSongsByArtist(String artist) {
-        ItunesResponse response = itunesClient.search(artist, "music", "song", 25);
+        ItunesResponse response = itunesClient.search(artist, "music", "song", 25, "AR");
         return response != null ? response.getResults() : List.of();
     }
 
@@ -54,7 +54,7 @@ public class ItunesService {
     }
 
     public List<SongDto> searchSongs(String term) {
-        ItunesResponse response = itunesClient.search(term, "music", "song", 25);
+        ItunesResponse response = itunesClient.search(term, "music", "song", 25, "AR");
         return response != null ? response.getResults() : List.of();
     }
 

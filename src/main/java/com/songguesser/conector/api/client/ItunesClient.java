@@ -19,11 +19,12 @@ public interface ItunesClient {
             @RequestParam("term") String term,
             @RequestParam(value = "media", defaultValue = "music") String media,
             @RequestParam(value = "entity", defaultValue = "song") String entity,
-            @RequestParam(value = "limit", defaultValue = "50") int limit
+            @RequestParam(value = "limit", defaultValue = "50") int limit,
+            @RequestParam(value = "country", defaultValue = "AR") String country
     );
 
-    @GetMapping("/lookup")
-    ItunesResponse lookup(@RequestParam("id") long id);
+        @GetMapping("/lookup?country=AR")
+        ItunesResponse lookup(@RequestParam("id") long id);
 
 
 }
