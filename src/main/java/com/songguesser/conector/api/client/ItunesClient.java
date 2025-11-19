@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 )
 public interface ItunesClient {
 
-    // API endpoints here
-
     @GetMapping("/search")
     ItunesResponse search(
             @RequestParam("term") String term,
